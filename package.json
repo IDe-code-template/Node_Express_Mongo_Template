@@ -1,0 +1,26 @@
+{
+  "name": "node_express_mongo_template",
+  "version": "1.0.0",
+  "description": "Starter template for Microservice using Node JS and Express with MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IDe-code-template/Node_Express_Mongo_Template.git"
+  },
+  "keywords": [
+    "Node",
+    "JS",
+    "Express",
+    "JS",
+    "MongoDB"
+  ],
+  "author": "Alen Joseph",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IDe-code-template/Node_Express_Mongo_Template/issues"
+  },
+  "homepage": "https://github.com/IDe-code-template/Node_Express_Mongo_Template#readme"
+}
