@@ -1,58 +1,28 @@
-/**
-* @fileoverview Main server file
-* @desc Main authService file
-* @desc This service follows the Google JavaScript Style Guide rules.
-*/
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
 
-var app = require("express")(),
-    bodyParser = require("body-parser"),
-    cors = require("cors"),
-    session = require("express-session"),
-    chalk = require("chalk"),
-    compression = require("compression"),
-    mongoStore = require('connect-mongo')(session),
-    helmet = require("helmet");
-    
-//Local Configurations
-var serverPortConfiguration = require("./Config/serverPortConfig");
-var mongoDbConfig = require("./Config/mongoDBConfig");
-var winston = require("./Config/winstonConfig");
+// route declaration
+const user = require('./routes/api/user');
+// routes
 
-//Server Timeout is defaulting to 2 minutes
-//Router
-var user = require("./Routers/user");
-
-app.use(cors());
-mongoDbConfig.connect();
-app.options("*", cors());
-app.use(helmet());
-app.use(compression());
-app.use(helmet.xssFilter());
-app.use(helmet.noSniff());
-app.use(helmet.hidePoweredBy({setTo:"PHP 4.2.2"}));
-app.use(require("morgan")("combined", {stream: winston.stream}));
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(session({
-    resave: true,
-    saveUninitialized: true,
-    secret: serverPortConfiguration.sessionSecret,
-    cookie: { maxAge: 1209600000 },
-    store: new mongoStore({
-      url: mongoDbConfig.mongoUrl,
-      autoReconnect: true,
-    })
-}));
+//DB Congif
+const db = require('./config/dbcon').mongoURI;
 
-app.use("/api/auth", user);
+mongoose
+  .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.info('MongoDb Connected'))
+  .catch(err => console.warn(err));
 
-app.use(function(err, req, res, next) {
-    return res.status(500).send({ error: err });
-});
+// Users Routes
+app.use(cors());
+app.use('/api/user', user);
 
-app.use("*", (req,res)=> {
-    res.status(404).json("The route you requested has not been found");
-});
+const port = process.env.PORT || 5000;
 
-app.listen(serverPortConfiguration.port,serverPortConfiguration.host,()=> console.log(`%s Audience server running on ${serverPortConfiguration.port}`, chalk.green('✓')));
+app.listen(port, () => console.info(`Server is running on Port ${port}`));
